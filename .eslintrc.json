@@ -1,7 +1,7 @@
 {
   "extends": "standard-with-typescript",
   "parserOptions": {
-    "project": "/home/andre/Área de Trabalho/labluby/trilha backend/cleanArchitecture/clean-node-api/tsconfig.json"
+    "project": "/home/andre/Área de Trabalho/labluby/trilha backend/cleanArchitecture/clean-node-api/tsconfig.eslint.json"
   },
   "rules": {
     "@typescript-eslint/strict-boolean-expressions": "off"
