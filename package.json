@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/main/server.js",
+    "start": "nodemon -L --watch ./dist ./dist/main/server.js",
     "build": "rimraf dist && tsc",
-    "up": "npm run build && docker-compose up",
+    "up": "npm run build && docker-compose up -d",
     "down": "docker-compose down",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:verbose": "jest --passWithNoTests --runInBand",
@@ -49,6 +49,7 @@
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.1.1",
+    "nodemon": "^2.0.15",
     "validator": "^13.7.0"
   },
   "engines": {
