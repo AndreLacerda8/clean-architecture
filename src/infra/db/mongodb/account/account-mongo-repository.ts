@@ -5,6 +5,7 @@ import { AddAccountRepository } from '@/data/protocols/db/account/add-account-re
 import { LoadAccountByEmailRepository } from '@/data/protocols/db/account/load-account-by-email-repository'
 import { LoadAccountByTokenRepository } from '@/data/protocols/db/account/load-account-by-token-repository'
 import { UpdateAccessTokenRepository } from '@/data/protocols/db/account/update-access-token-repository'
+import { ObjectId } from 'mongodb'
 
 export class AccountMongoRepository implements AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository {
   async add (accountData: AddAccountModel): Promise<AccountModel> {
@@ -24,7 +25,7 @@ export class AccountMongoRepository implements AddAccountRepository, LoadAccount
   async updateAccessToken (id: any, token: string): Promise<void> {
     const accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.updateOne({
-      _id: id
+      _id: new ObjectId(id)
     }, {
       $set: {
         accessToken: token
