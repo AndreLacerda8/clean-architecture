@@ -14,13 +14,12 @@ const makeSut = (): SurveyResultMongoRepository => {
 
 const mockSurvey = async (): Promise<SurveyModel> => {
   const res = await surveyCollection.insertOne(mockAddSurveyParams())
-  const survey = await surveyCollection.findOne({ _id: res.insertedId })
-  return MongoHelper.map(survey)
+  return MongoHelper.map(res.ops[0])
 }
 
 const mockAccountId = async (): Promise<string> => {
   const res = await accountCollection.insertOne(mockAddAccountParams())
-  return res.insertedId.toHexString()
+  return res.ops[0]._id
 }
 
 describe('SurveyMongoRepository', () => {
@@ -33,11 +32,11 @@ describe('SurveyMongoRepository', () => {
   })
 
   beforeEach(async () => {
-    surveyCollection = MongoHelper.getCollection('surveys')
+    surveyCollection = await MongoHelper.getCollection('surveys')
     await surveyCollection.deleteMany({})
-    surveyResultCollection = MongoHelper.getCollection('surveyResults')
+    surveyResultCollection = await MongoHelper.getCollection('surveyResults')
     await surveyResultCollection.deleteMany({})
-    accountCollection = MongoHelper.getCollection('accounts')
+    accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
   })
 
@@ -53,8 +52,8 @@ describe('SurveyMongoRepository', () => {
         date: new Date()
       })
       const surveyResult = await surveyResultCollection.findOne({
-        surveyId: new ObjectId(survey.id),
-        accountId: new ObjectId(accountId)
+        surveyId: survey.id,
+        accountId
       })
       expect(surveyResult).toBeTruthy()
     })
@@ -77,8 +76,8 @@ describe('SurveyMongoRepository', () => {
       })
       const surveyResult = await surveyResultCollection
         .find({
-          surveyId: new ObjectId(survey.id),
-          accountId: new ObjectId(accountId)
+          surveyId: survey.id,
+          accountId
         })
         .toArray()
       expect(surveyResult).toBeTruthy()

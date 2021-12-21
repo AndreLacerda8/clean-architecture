@@ -5,7 +5,7 @@ import faker from 'faker'
 
 export const mockSurveyModel = (): SurveyModel => {
   return {
-    id: faker.datatype.uuid(),
+    id: faker.random.uuid(),
     question: faker.random.words(),
     answers: [{
       answer: faker.random.word()

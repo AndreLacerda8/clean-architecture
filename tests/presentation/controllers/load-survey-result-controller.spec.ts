@@ -8,8 +8,8 @@ import MockDate from 'mockdate'
 import faker from 'faker'
 
 const mockRequest = (): LoadSurveyResultController.Request => ({
-  accountId: faker.datatype.uuid(),
-  surveyId: faker.datatype.uuid()
+  accountId: faker.random.uuid(),
+  surveyId: faker.random.uuid()
 })
 
 type SutTypes = {

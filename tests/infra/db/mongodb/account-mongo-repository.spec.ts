@@ -4,10 +4,6 @@ import { mockAddAccountParams } from '@/tests/domain/mocks'
 import { Collection } from 'mongodb'
 import faker from 'faker'
 
-const makeSut = (): AccountMongoRepository => {
-  return new AccountMongoRepository()
-}
-
 let accountCollection: Collection
 
 describe('AccountMongoRepository', () => {
@@ -20,9 +16,13 @@ describe('AccountMongoRepository', () => {
   })
 
   beforeEach(async () => {
-    accountCollection = MongoHelper.getCollection('accounts')
+    accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
   })
+
+  const makeSut = (): AccountMongoRepository => {
+    return new AccountMongoRepository()
+  }
 
   describe('add()', () => {
     test('Should return an account on success', async () => {
@@ -72,9 +72,9 @@ describe('AccountMongoRepository', () => {
     test('Should update the account accessToken on success', async () => {
       const sut = makeSut()
       const res = await accountCollection.insertOne(mockAddAccountParams())
-      const fakeAccount = await accountCollection.findOne({ _id: res.insertedId })
+      const fakeAccount = res.ops[0]
       expect(fakeAccount.accessToken).toBeFalsy()
-      const accessToken = faker.datatype.uuid()
+      const accessToken = faker.random.uuid()
       await sut.updateAccessToken(fakeAccount._id, accessToken)
       const account = await accountCollection.findOne({ _id: fakeAccount._id })
       expect(account).toBeTruthy()
@@ -86,13 +86,13 @@ describe('AccountMongoRepository', () => {
     let name = faker.name.findName()
     let email = faker.internet.email()
     let password = faker.internet.password()
-    let accessToken = faker.datatype.uuid()
+    let accessToken = faker.random.uuid()
 
     beforeEach(() => {
       name = faker.name.findName()
       email = faker.internet.email()
       password = faker.internet.password()
-      accessToken = faker.datatype.uuid()
+      accessToken = faker.random.uuid()
     })
 
     test('Should return an account on loadByToken without role', async () => {
