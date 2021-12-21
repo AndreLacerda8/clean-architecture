@@ -21,6 +21,9 @@ const makeSut = (): SutTypes => {
   }
 }
 
+let surveyId: string
+let accountId: string
+
 describe('DbLoadSurveyResult UseCase', () => {
   beforeAll(() => {
     MockDate.set(new Date())
@@ -30,17 +33,22 @@ describe('DbLoadSurveyResult UseCase', () => {
     MockDate.reset()
   })
 
-  it('Should call LoadSurveyResultRepository', async () => {
+  beforeEach(() => {
+    surveyId = 'any_survey_id'
+    accountId = 'any_account_id'
+  })
+
+  it('Should call LoadSurveyResultRepository with correct values', async () => {
     const { sut, loadSurveyResultRepositoryStub } = makeSut()
     const loadBySurveyIdSpy = jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId')
-    await sut.load('any_survey_id')
-    expect(loadBySurveyIdSpy).toHaveBeenCalledWith('any_survey_id')
+    await sut.load(surveyId, accountId)
+    expect(loadBySurveyIdSpy).toHaveBeenCalledWith(surveyId, accountId)
   })
 
   it('Should throw if LoadSurveyResultRepository throws', async () => {
     const { sut, loadSurveyResultRepositoryStub } = makeSut()
     jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId').mockImplementationOnce(throwError)
-    const promise = sut.load('any_survey_id')
+    const promise = sut.load(surveyId, accountId)
     await expect(promise).rejects.toThrow()
   })
 
@@ -48,20 +56,20 @@ describe('DbLoadSurveyResult UseCase', () => {
     const { sut, loadSurveyResultRepositoryStub, loadSurveyByIdRepositoryStub } = makeSut()
     const loadById = jest.spyOn(loadSurveyByIdRepositoryStub, 'loadById')
     jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId').mockReturnValueOnce(Promise.resolve(null))
-    await sut.load('any_survey_id')
+    await sut.load(surveyId, accountId)
     expect(loadById).toHaveBeenCalledWith('any_survey_id')
   })
 
   it('Should return surveyResultModel with all answers with count 0 if LoadSurveyResultRepository returns null', async () => {
     const { sut, loadSurveyResultRepositoryStub } = makeSut()
     jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId').mockReturnValueOnce(Promise.resolve(null))
-    const surveyResult = await sut.load('any_survey_id')
+    const surveyResult = await sut.load(surveyId, accountId)
     expect(surveyResult).toEqual(mockSurveyResultModel())
   })
 
   it('Should return surveyResultModel on success', async () => {
     const { sut } = makeSut()
-    const surveyResult = await sut.load('any_survey_id')
+    const surveyResult = await sut.load(surveyId, accountId)
     expect(surveyResult).toEqual(mockSurveyResultModel())
   })
 })

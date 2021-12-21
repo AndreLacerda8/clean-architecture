@@ -7,6 +7,7 @@ import { HttpRequest, LoadSurveyById, LoadSurveyResult } from './load-survey-res
 import MockDate from 'mockdate'
 
 const mockRequest = (): HttpRequest => ({
+  accountId: 'any_id',
   params: {
     surveyId: 'any_id'
   }
@@ -59,11 +60,12 @@ describe('LoadSurveyResult Controller', () => {
     expect(httpResponse).toEqual(serverError(new Error()))
   })
 
-  it('Should call LoadSurveyResult with correct value', async () => {
+  it('Should call LoadSurveyResult with correct values', async () => {
     const { sut, loadSurveyResultStub } = makeSut()
+    const httpRequest = mockRequest()
     const loadSpy = jest.spyOn(loadSurveyResultStub, 'load')
-    await sut.handle(mockRequest())
-    expect(loadSpy).toHaveBeenCalledWith('any_id')
+    await sut.handle(httpRequest)
+    expect(loadSpy).toHaveBeenCalledWith('any_id', httpRequest.accountId)
   })
 
   it('Should return 500 if LoadSurveyResult throws', async () => {
